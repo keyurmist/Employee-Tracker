@@ -181,3 +181,31 @@ addDepartment = () => {
       );
     });
 };
+
+//Function to add a role
+addRole = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "role",
+      message: "What role do you want to add?",
+      validate: async (answer) => {
+        if (!answer) {
+          return "Please enter a valid role";
+        }
+        return true;
+      },
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "What is the salary of this role?",
+      validate: (answer) => {
+        if (!answer || isNaN(answer)) {
+          return "Please enter a valid number";
+        }
+        return true;
+      },
+    },
+  ]);
+};
