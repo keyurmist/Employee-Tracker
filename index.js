@@ -105,3 +105,14 @@ const promptUser = () => {
       }
     });
 };
+
+//function to view departments
+viewDepartments = () => {
+  const sql = `SELECT department.id AS id, department.name AS department FROM department`;
+
+  connection.query(sql, (err, answer) => {
+    if (err) throw err;
+    console.table(answer);
+    promptUser();
+  });
+};
