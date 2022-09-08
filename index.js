@@ -184,28 +184,64 @@ addDepartment = () => {
 
 //Function to add a role
 addRole = () => {
-  inquirer.prompt([
-    {
-      type: "input",
-      name: "role",
-      message: "What role do you want to add?",
-      validate: async (answer) => {
-        if (!answer) {
-          return "Please enter a valid role";
-        }
-        return true;
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "role",
+        message: "What role do you want to add?",
+        validate: async (answer) => {
+          if (!answer) {
+            return "Please enter a valid role";
+          }
+          return true;
+        },
       },
-    },
-    {
-      type: "input",
-      name: "salary",
-      message: "What is the salary of this role?",
-      validate: (answer) => {
-        if (!answer || isNaN(answer)) {
-          return "Please enter a valid number";
-        }
-        return true;
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the salary of this role?",
+        validate: (answer) => {
+          if (!answer || isNaN(answer)) {
+            return "Please enter a valid number";
+          }
+          return true;
+        },
       },
-    },
-  ]);
+    ])
+    .then((answer) => {
+      const params = [answer.role, answer.salary];
+      const roleSql = `SELECT name, id FROM department`;
+
+      connection.query(roleSql, (err, data) => {
+        if (err) throw err;
+
+        const departments = data.map(({ name, id }) => ({
+          name: name,
+          value: id,
+        }));
+        inquirer
+          .prompt([
+            {
+              type: "list",
+              name: "departments",
+              message: "Which department does thie role belong to?",
+              choices: departments,
+            },
+          ])
+          .then((departmentChoice) => {
+            const departments = departmentChoice.departments;
+            params.push(departments);
+
+            const sql = `INSERT INTO role (title, salary, department_id)
+            VALUES (?, ?, ?)`;
+
+            connection.query(sql, params, (err, result) => {
+              if (err) throw err;
+              console.log(`Successfully added ${answer.role} to the database`);
+              viewRoles();
+            });
+          });
+      });
+    });
 };
