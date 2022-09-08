@@ -116,3 +116,16 @@ viewDepartments = () => {
     promptUser();
   });
 };
+
+//function to view roles
+viewRoles = () => {
+  const sql = `
+  SELECT role.id, role.title, department.name AS department FROM role
+  INNER JOIN deparment ON role.department_id = department.id`;
+
+  connection.query(sql, (err, answer) => {
+    if (err) throw err;
+    console.table(answer);
+    promptUser();
+  });
+};
