@@ -150,3 +150,34 @@ viewEmployees = () => {
     promptUser();
   });
 };
+
+//function to add department
+addDepartment = () => {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "department",
+        message: "What is the name of the department you wish to add?",
+        validate: async (answer) => {
+          if (!answer) {
+            return "Please enter a valid department";
+          }
+          return true;
+        },
+      },
+    ])
+    .then(function (answer) {
+      connection.query(
+        `INSERT INTO department department (name) 
+         VALUES ("${answer.department}")`,
+        (err, results) => {
+          if (err) throw err;
+          console.log(
+            `Successfully added ${answer.department} to the database.`
+          );
+          viewDepartments();
+        }
+      );
+    });
+};
