@@ -121,7 +121,7 @@ viewDepartments = () => {
 viewRoles = () => {
   const sql = `
   SELECT role.id, role.title, department.name AS department FROM role
-  INNER JOIN deparment ON role.department_id = department.id`;
+  INNER JOIN department ON role.department_id = department.id`;
 
   connection.query(sql, (err, answer) => {
     if (err) throw err;
@@ -168,15 +168,13 @@ addDepartment = () => {
       },
     ])
     .then(function (answer) {
-      connection.query(
-        `INSERT INTO department department (name) 
-         VALUES (?)`,
-        (err, results) => {
-          if (err) throw err;
-          console.log(`Successfully added to the database.`);
-          viewDepartments();
-        }
-      );
+      const sql = `INSERT INTO department (name)
+                  VALUES (?)`;
+      connection.query(sql, (err, results) => {
+        if (err) throw err;
+        console.log(`Successfully added to the database.`);
+        viewDepartments();
+      });
     });
 };
 
@@ -494,7 +492,7 @@ deleteDepartment = () => {
           if (err) throw err;
           console.log("Successfully deleted!");
 
-          showDepartments();
+          viewDepartments();
         });
       });
   });
