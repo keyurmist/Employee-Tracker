@@ -472,7 +472,7 @@ updateManager = () => {
 deleteDepartment = () => {
   const deptSql = `SELECT * FROM department`;
 
-  connection.promise().query(deptSql, (err, data) => {
+  connection.query(deptSql, (err, data) => {
     if (err) throw err;
 
     const dept = data.map(({ name, id }) => ({ name: name, value: id }));
