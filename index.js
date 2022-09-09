@@ -408,3 +408,70 @@ updateEmployee = () => {
       });
   });
 };
+
+// function to update an employee manager
+updateManager = () => {
+  // get employees from employee table
+
+  connection.promise().query(`SELECT * FROM employee`, (err, data) => {
+    if (err) throw err;
+
+    const employees = data.map(({ id, first_name, last_name }) => ({
+      name: first_name + " " + last_name,
+      value: id,
+    }));
+
+    inquirer
+      .prompt([
+        {
+          type: "list",
+          name: "name",
+          message: "Which employee would you like to update?",
+          choices: employees,
+        },
+      ])
+      .then((empChoice) => {
+        const employee = empChoice.name;
+        const params = [];
+        params.push(employee);
+
+        connection.promise().query(`SELECT * FROM employee`, (err, data) => {
+          if (err) throw err;
+
+          const managers = data.map(({ id, first_name, last_name }) => ({
+            name: first_name + " " + last_name,
+            value: id,
+          }));
+
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                name: "manager",
+                message: "Who is the employee's manager?",
+                choices: managers,
+              },
+            ])
+            .then((managerChoice) => {
+              const manager = managerChoice.manager;
+              params.push(manager);
+
+              let employee = params[0];
+              params[0] = manager;
+              params[1] = employee;
+
+              connection.query(
+                `UPDATE employee SET manager_id = ? WHERE id = ?`,
+                params,
+                (err, result) => {
+                  if (err) throw err;
+                  console.log("Employee has been updated!");
+
+                  viewEmployees();
+                }
+              );
+            });
+        });
+      });
+  });
+};
